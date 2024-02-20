@@ -18,9 +18,6 @@ inputs:
     description: 'The admin password uses for the cluster'
     required: false
 
-env:
-  SECURITY_PLUGIN: opensearch-security
-
 runs:
   using: "composite"
   steps:
@@ -89,8 +86,8 @@ runs:
       run: |
         echo "running linux security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
-        chmod +x  ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/${{ env.SECURITY_PLUGIN }}/tools/install_demo_configuration.sh
-        /bin/bash -c "yes | ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/${{ env.SECURITY_PLUGIN }}/tools/install_demo_configuration.sh -t"
+        chmod +x  ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh
+        /bin/bash -c "yes | ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
       shell: bash
 
     - name: Setup security demo configuration for Windows
@@ -98,8 +95,8 @@ runs:
       run: |
         echo "running windows security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
-        chmod +x  ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/${{ env.SECURITY_PLUGIN }}/tools/install_demo_configuration.bat
-        /bin/bash -c "yes | ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/${{ env.SECURITY_PLUGIN }}/tools/install_demo_configuration.bat -t"
+        chmod +x  ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat
+        /bin/bash -c "yes | ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
       shell: bash
 
     # Run OpenSearch
