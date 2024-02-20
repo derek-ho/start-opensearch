@@ -18,6 +18,10 @@ inputs:
     description: 'The admin password uses for the cluster'
     required: false
 
+  security_config_file:
+    description: 'Path to a security config file to replace the default. Leave empty if security is not enabled or using the default config'
+    required: false
+
 runs:
   using: "composite"
   steps:
@@ -80,7 +84,14 @@ runs:
         }
       shell: pwsh
 
-    # Run any configuration scripts
+    - name: Replace security configuration file if applicable
+      run: |
+        if [ -f ${{ inputs.security_config_file }} ]; then
+          mv ${{ inputs.security_config_file }} ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/config/opensearch-security/config.yml
+        fi
+      shell: bash
+
+    # Setup security if it's enabled
     - name: Setup security demo configuration
       if: ${{ runner.os == 'Linux' && inputs.security-enabled }}
       run: |
