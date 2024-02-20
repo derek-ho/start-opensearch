@@ -73,10 +73,9 @@ runs:
       shell: bash
 
     - name: Replace security configuration file if applicable
+      if: ${{ inputs.security_config_file != '' }}
       run: |
-        if [ -f ${{ inputs.security_config_file }} ]; then
           mv ${{ inputs.security_config_file }} ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/config/opensearch-security/config.yml
-        fi
       shell: bash
 
     # Setup security if it's enabled
