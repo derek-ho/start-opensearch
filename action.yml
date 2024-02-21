@@ -79,7 +79,7 @@ runs:
       shell: bash
 
     - name: Install plugin(s) into OpenSearch for Windows
-      if: ${{ runner.os == 'Windows'}}
+      if: ${{ runner.os == 'Windows' && inputs.plugins != '' }}
       run: |
         $pluginNames = "${{ inputs.plugins }}" -split ','
         if ($pluginNames.Length -gt 0) {
