@@ -32,6 +32,11 @@ runs:
       run: git config --system core.longpaths true
       shell: pwsh
 
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
     # Download OpenSearch
     - name: Download OpenSearch for Windows
       uses: peternied/download-file@v2
@@ -87,7 +92,7 @@ runs:
     - name: Replace security configuration file if applicable
       if: ${{ inputs.security_config_file != '' }}
       run: |
-          mv ${{ inputs.security_config_file }} ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/config/opensearch-security/config.yml
+          mv ${{ inputs.security_config_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch-security/config.yml
       shell: bash
 
     # Setup security if it's enabled
@@ -96,8 +101,8 @@ runs:
       run: |
         echo "running linux security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
-        chmod +x  ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh
-        /bin/bash -c "yes | ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
+        chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh
+        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
       shell: bash
 
     - name: Setup security demo configuration for Windows
@@ -105,8 +110,8 @@ runs:
       run: |
         echo "running windows security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
-        chmod +x  ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat
-        /bin/bash -c "yes | ./opensearch-${{ env.OPENSEARCH_VERSION }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
+        chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat
+        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
       shell: bash
 
     # Run OpenSearch
