@@ -92,7 +92,7 @@ runs:
 
     # Setup security if it's enabled
     - name: Setup security demo configuration
-      if: ${{ runner.os == 'Linux' && inputs.security-enabled }}
+      if: ${{ runner.os == 'Linux' && inputs.security-enabled == 'true' }}
       run: |
         echo "running linux security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
@@ -101,7 +101,7 @@ runs:
       shell: bash
 
     - name: Setup security demo configuration for Windows
-      if: ${{ runner.os == 'Windows' && inputs.security-enabled }}
+      if: ${{ runner.os == 'Windows' && inputs.security-enabled == 'true' }}
       run: |
         echo "running windows security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
