@@ -79,16 +79,15 @@ runs:
       shell: bash
 
     - name: Install plugin(s) into OpenSearch for Windows
-      if: ${{ runner.os == 'Windows'}}
+      if: ${{ runner.os == 'Windows' && inputs.plugins != '' }}
       run: |
-        chmod +x ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin.bat
-        plugins="${{ inputs.plugins }}"
-        if [ -n "$plugins" ]; then
-          echo "$plugins" | tr ',' '\n' | while read -r plugin; do
-            /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin.bat install ${plugin}"
-          done
-        fi
-      shell: bash
+        $pluginNames = "${{ inputs.plugins }}" -split ','
+        if ($pluginNames.Length -gt 0) {
+          foreach ($plugin in $pluginNames) {
+            'y' | .\opensearch-${{ inputs.opensearch-version }}-SNAPSHOT\bin\opensearch-plugin.bat install ${plugin}
+          }
+        }
+      shell: pwsh
 
     - name: Replace security configuration file if applicable
       if: ${{ inputs.security_config_file != '' }}
