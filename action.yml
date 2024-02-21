@@ -7,7 +7,7 @@ inputs:
     required: true
 
   plugins:
-    description: 'A comma separated list of plugins to install. Leave empty to not install any. Each entry should be of the following formats: either a full link to the plugin zip, or a full path prefixed with `file: `, for example: `file:$(pwd)/my-plugin.zip`'
+    description: 'A comma separated list of plugins to install. Leave empty to not install any. Each entry should be a full path prefixed with `file: `, for example: `file:$(pwd)/my-plugin.zip`'
     required: false
 
   security-enabled:
@@ -61,16 +61,28 @@ runs:
         del opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
       shell: pwsh
 
-    - name: Install plugin(s) into OpenSearch
+    - name: Install plugin(s) into OpenSearch for Linux
+      if: ${{ runner.os == 'Linux'}}
       run: |
         chmod +x ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin
         plugins="${{ inputs.plugins }}"
         if [ -n "$plugins" ]; then
           echo "$plugins" | tr ',' '\n' | while read -r plugin; do
-            /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin install \"$plugin\""
+            /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin install ${plugin}"
           done
         fi
       shell: bash
+
+    - name: Install plugin(s) into OpenSearch for Windows
+      if: ${{ runner.os == 'Windows'}}
+      run: |
+        $pluginNames = "${{ inputs.plugins }}" -split ','
+        if ($pluginNames.Length -gt 0) {
+          foreach ($plugin in $pluginNames) {
+            'y' | .\opensearch-${{ inputs.opensearch-version }}-SNAPSHOT\bin\opensearch-plugin.bat install ${plugin}
+          }
+        }
+      shell: pwsh
 
     - name: Replace security configuration file if applicable
       if: ${{ inputs.security_config_file != '' }}
