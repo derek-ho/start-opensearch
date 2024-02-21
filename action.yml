@@ -118,7 +118,7 @@ runs:
 
     - name: Use more space
       run: |
-        echo '' >> ./config/opensearch.yml
+        echo '' >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
         echo "cluster.routing.allocation.disk.threshold_enabled: false" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
 
