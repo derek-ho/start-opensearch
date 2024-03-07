@@ -63,7 +63,7 @@ runs:
     - name: Extract downloaded tar
       if: ${{ runner.os == 'Linux' }}
       run: |
-        tar -xzf opensearch-*.tar.gz && mv opensearch-min-${{inputs.opensearch-version}}-SNAPSHOT opensearch-min-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.opensearch_port }}
+        tar -xzf opensearch-*.tar.gz && mv opensearch-${{ inputs.opensearch-version }}-SNAPSHOT opensearch-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.opensearch_port }}
         rm -f opensearch-*.tar.gz
       shell: bash
 
