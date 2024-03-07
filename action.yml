@@ -63,7 +63,7 @@ runs:
     - name: Extract downloaded tar
       if: ${{ runner.os == 'Linux' }}
       run: |
-        tar -xzf opensearch-*.tar.gz
+        tar -xzf opensearch-*.tar.gz && mv opensearch-min-${{inputs.opensearch-version}}-SNAPSHOT opensearch-min-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.opensearch_port }}
         rm -f opensearch-*.tar.gz
       shell: bash
 
@@ -77,11 +77,11 @@ runs:
     - name: Install plugin(s) into OpenSearch for Linux
       if: ${{ runner.os == 'Linux'}}
       run: |
-        chmod +x ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin
+        chmod +x ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/bin/opensearch-plugin
         plugins="${{ inputs.plugins }}"
         if [ -n "$plugins" ]; then
           echo "$plugins" | tr ',' '\n' | while read -r plugin; do
-            /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch-plugin install ${plugin}"
+            /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/bin/opensearch-plugin install ${plugin}"
           done
         fi
       shell: bash
@@ -100,7 +100,7 @@ runs:
     - name: Replace security configuration file if applicable
       if: ${{ inputs.security_config_file != '' }}
       run: |
-          mv ${{ inputs.security_config_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch-security/config.yml
+          mv ${{ inputs.security_config_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/config/opensearch-security/config.yml
       shell: bash
 
     # Setup security if it's enabled
@@ -109,9 +109,9 @@ runs:
       run: |
         echo "running linux security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
-        chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh
-        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
-        echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
+        chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/plugins/opensearch-security/tools/install_demo_configuration.sh
+        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
+        echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/config/opensearch.yml
       shell: bash
 
     - name: Setup security demo configuration for Windows
@@ -126,20 +126,20 @@ runs:
 
     - name: Use more space
       run: |
-        echo '' >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
-        echo "cluster.routing.allocation.disk.threshold_enabled: false" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
+        echo '' >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/config/opensearch.yml
+        echo "cluster.routing.allocation.disk.threshold_enabled: false" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/config/opensearch.yml
       shell: bash
 
     - name: Replace opensearch.yml file if applicable
       if: ${{ inputs.opensearch_yml_file != '' }}
       run: |
-          mv ${{ inputs.opensearch_yml_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
+          mv ${{ inputs.opensearch_yml_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/config/opensearch.yml
       shell: bash
 
     # Run OpenSearch
     - name: Run OpenSearch with plugin on Linux
       if: ${{ runner.os == 'Linux'}}
-      run: /bin/bash -c "./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/bin/opensearch &"
+      run: /bin/bash -c "./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/bin/opensearch &"
       shell: bash
 
     - name: Run OpenSearch with plugin on Windows
