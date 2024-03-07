@@ -181,5 +181,5 @@ runs:
     #   shell: pwsh
 
     - if: always()
-      run: cat ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/logs/opensearch.log
+      run: cat ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/logs/opensearch.log
       shell: bash
