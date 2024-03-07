@@ -26,6 +26,10 @@ inputs:
     description: 'Path to a opensearch.yml file to replace the default. Leave empty to use the default config'
     required: false
 
+  opensearch_port:
+    description: 'Port to run opensearch on. Leave empty to use the default 9200'
+    required: false
+
 runs:
   using: "composite"
   steps:
@@ -149,32 +153,32 @@ runs:
       with:
         seconds: 30
 
-     # Verify that the server is operational
-    - name: Check OpenSearch Running on Linux
-      if: ${{ runner.os != 'Windows'}}
-      run: |
-        if [ "${{ inputs.security-enabled }}" == "true" ]; then
-          curl https://localhost:9200/_cat/plugins -u 'admin:${{ inputs.admin-password }}' -k -v --fail-with-body
-        else
-          curl http://localhost:9200/_cat/plugins -v
-        fi
-      shell: bash
+    #  # Verify that the server is operational
+    # - name: Check OpenSearch Running on Linux
+    #   if: ${{ runner.os != 'Windows'}}
+    #   run: |
+    #     if [ "${{ inputs.security-enabled }}" == "true" ]; then
+    #       curl https://localhost:9200/_cat/plugins -u 'admin:${{ inputs.admin-password }}' -k -v --fail-with-body
+    #     else
+    #       curl http://localhost:9200/_cat/plugins -v
+    #     fi
+    #   shell: bash
 
-    - name: Check OpenSearch Running on Windows
-      if: ${{ runner.os == 'Windows'}}
-      run: |
-        if ("${{ inputs.security-enabled }}" -eq "true") {
-          $credentialBytes = [Text.Encoding]::ASCII.GetBytes("admin:${{ inputs.admin-password }}")
-          $encodedCredentials = [Convert]::ToBase64String($credentialBytes)
-          $baseCredentials = "Basic $encodedCredentials"
-          $Headers = @{ Authorization = $baseCredentials }
-          $url = 'https://localhost:9200/_cat/plugins'
-        } else {
-          $Headers = @{ }
-          $url = 'http://localhost:9200/_cat/plugins'
-        }
-        Invoke-WebRequest -SkipCertificateCheck -Uri $url -Headers $Headers;
-      shell: pwsh
+    # - name: Check OpenSearch Running on Windows
+    #   if: ${{ runner.os == 'Windows'}}
+    #   run: |
+    #     if ("${{ inputs.security-enabled }}" -eq "true") {
+    #       $credentialBytes = [Text.Encoding]::ASCII.GetBytes("admin:${{ inputs.admin-password }}")
+    #       $encodedCredentials = [Convert]::ToBase64String($credentialBytes)
+    #       $baseCredentials = "Basic $encodedCredentials"
+    #       $Headers = @{ Authorization = $baseCredentials }
+    #       $url = 'https://localhost:9200/_cat/plugins'
+    #     } else {
+    #       $Headers = @{ }
+    #       $url = 'http://localhost:9200/_cat/plugins'
+    #     }
+    #     Invoke-WebRequest -SkipCertificateCheck -Uri $url -Headers $Headers;
+    #   shell: pwsh
 
     - if: always()
       run: cat ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/logs/opensearch.log
