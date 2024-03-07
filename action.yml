@@ -22,6 +22,10 @@ inputs:
     description: 'Path to a security config file to replace the default. Leave empty if security is not enabled or using the default config'
     required: false
 
+  opensearch_yml_file:
+    description: 'Path to a opensearch.yml file to replace the default. Leave empty to use the default config'
+    required: false
+
 runs:
   using: "composite"
   steps:
@@ -120,6 +124,12 @@ runs:
       run: |
         echo '' >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
         echo "cluster.routing.allocation.disk.threshold_enabled: false" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
+      shell: bash
+
+    - name: Replace opensearch.yml file if applicable
+      if: ${{ inputs.opensearch_yml_file != '' }}
+      run: |
+          mv ${{ inputs.opensearch_yml_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
 
     # Run OpenSearch
