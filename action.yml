@@ -22,8 +22,8 @@ inputs:
     description: 'Path to a security config file to replace the default. Leave empty if security is not enabled or using the default config'
     required: false
 
-  opensearch_yml_file:
-    description: 'Path to a opensearch.yml file to replace the default. Leave empty to use the default config'
+  port:
+    description: 'Port to run OpenSearch. Leave empty to use the default config (9200)'
     required: false
 
 runs:
@@ -127,9 +127,9 @@ runs:
       shell: bash
 
     - name: Replace opensearch.yml file if applicable
-      if: ${{ inputs.opensearch_yml_file != '' }}
+      if: ${{ inputs.port != '' }}
       run: |
-          mv ${{ inputs.opensearch_yml_file }} ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
+          echo -e "\nhttp.port: ${{ inputs.port }}" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
 
     # Run OpenSearch
@@ -154,9 +154,9 @@ runs:
       if: ${{ runner.os != 'Windows'}}
       run: |
         if [ "${{ inputs.security-enabled }}" == "true" ]; then
-          curl https://localhost:9200/_cat/plugins -u 'admin:${{ inputs.admin-password }}' -k -v --fail-with-body
+          curl https://localhost:${{ inputs.port || 9200 }}/_cat/plugins -u 'admin:${{ inputs.admin-password }}' -k -v --fail-with-body
         else
-          curl http://localhost:9200/_cat/plugins -v
+          curl http://localhost:${{ inputs.port || 9200 }}/_cat/plugins -v
         fi
       shell: bash
 
@@ -168,10 +168,10 @@ runs:
           $encodedCredentials = [Convert]::ToBase64String($credentialBytes)
           $baseCredentials = "Basic $encodedCredentials"
           $Headers = @{ Authorization = $baseCredentials }
-          $url = 'https://localhost:9200/_cat/plugins'
+          $url = 'https://localhost:${{ inputs.port || 9200 }}/_cat/plugins'
         } else {
           $Headers = @{ }
-          $url = 'http://localhost:9200/_cat/plugins'
+          $url = 'http://localhost:${{ inputs.port || 9200 }}/_cat/plugins'
         }
         Invoke-WebRequest -SkipCertificateCheck -Uri $url -Headers $Headers;
       shell: pwsh
