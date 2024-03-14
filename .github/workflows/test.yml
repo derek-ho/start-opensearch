@@ -23,6 +23,25 @@ jobs:
       run: curl http://localhost:9200/_cat/plugins -v
       shell: bash
 
+  test-no-plugins-port-9201:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ./ # Use the action
+      with:
+        opensearch-version: 3.0.0
+        security-enabled: false
+        port: 9201
+
+    - name: Checks that OpenSearch is healthy
+      run: curl http://localhost:9201/_cat/plugins -v
+      shell: bash
+
   test-with-security:
     strategy:
       fail-fast: false
