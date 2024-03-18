@@ -70,8 +70,8 @@ runs:
     - name: Extract downloaded zip
       if: ${{ runner.os == 'Windows' }}
       run: |
-        tar -xzf opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip opensearch-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.opensearch_port }}
-        del opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
+    Expand-Archive -Path "opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip" -DestinationPath "opensearch-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.opensearch_port }}"
+    Remove-Item -Path "opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip"
       shell: pwsh
 
     - name: Install plugin(s) into OpenSearch for Linux
