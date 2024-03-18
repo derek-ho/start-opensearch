@@ -70,7 +70,7 @@ runs:
     - name: Extract downloaded zip
       if: ${{ runner.os == 'Windows' }}
       run: |
-        tar -xzf opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
+        tar -xzf opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip opensearch-${{inputs.opensearch-version}}-SNAPSHOT${{ inputs.opensearch_port }}
         del opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
       shell: pwsh
 
@@ -92,7 +92,7 @@ runs:
         $pluginNames = "${{ inputs.plugins }}" -split ','
         if ($pluginNames.Length -gt 0) {
           foreach ($plugin in $pluginNames) {
-            'y' | .\opensearch-${{ inputs.opensearch-version }}-SNAPSHOT\bin\opensearch-plugin.bat install ${plugin}
+            'y' | .\opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}\bin\opensearch-plugin.bat install ${plugin}
           }
         }
       shell: pwsh
@@ -119,9 +119,9 @@ runs:
       run: |
         echo "running windows security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
-        chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat
-        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
-        echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
+        chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/plugins/opensearch-security/tools/install_demo_configuration.bat
+        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
+        echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}/config/opensearch.yml
       shell: bash
 
     - name: Use more space
@@ -144,7 +144,7 @@ runs:
 
     - name: Run OpenSearch with plugin on Windows
       if: ${{ runner.os == 'Windows'}}
-      run: start .\opensearch-${{ inputs.opensearch-version }}-SNAPSHOT\bin\opensearch.bat
+      run: start .\opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.opensearch_port }}\bin\opensearch.bat
       shell: pwsh
 
     # Give the OpenSearch process some time to boot up before sending any requires, might need to increase the default time!
