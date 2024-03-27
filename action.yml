@@ -106,11 +106,15 @@ runs:
         echo "running linux security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
         chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh
-        if /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"; then
-          echo "Command executed successfully."
+        opensearch_version="${{ inputs.opensearch-version }}"
+        opensearch_major_version=$(echo "$opensearch_version" | awk -F'.' '{print $1}')
+        opensearch_minor_version=$(echo "$opensearch_version" | awk -F'.' '{print $2}')
+        if [ "$opensearch_major_version" -lt 2 ] || ([ "$opensearch_major_version" -eq 2 ] && [ "$opensearch_minor_version" -lt 12 ]); then
+          echo "Running the command without -t option (OpenSearch version is $opensearch_version)"
+          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh"
         else
-          echo "Command failed. Retrying without the -t option."
-          /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh"
+          echo "Running the command with -t option (OpenSearch version is $opensearch_version)"
+          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
         fi
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
@@ -121,11 +125,15 @@ runs:
         echo "running windows security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
         chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat
-        if /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"; then
-          echo "Command executed successfully."
+        opensearch_version="${{ inputs.opensearch-version }}"
+        opensearch_major_version=$(echo "$opensearch_version" | cut -d'.' -f1)
+        opensearch_minor_version=$(echo "$opensearch_version" | cut -d'.' -f2)
+        if [ "$opensearch_major_version" -lt 2 ] || ([ "$opensearch_major_version" -eq 2 ] && [ "$opensearch_minor_version" -lt 12 ]); then
+          echo "Running the command without -t option (OpenSearch version is $opensearch_version)"
+          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat"
         else
-          echo "Command failed. Retrying without the -t option."
-          /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat"
+          echo "Running the command with -t option (OpenSearch version is $opensearch_version)"
+          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
         fi
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
