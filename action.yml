@@ -106,7 +106,12 @@ runs:
         echo "running linux security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
         chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh
-        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"
+        if /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh -t"; then
+          echo "Command executed successfully."
+        else
+          echo "Command failed. Retrying without the -t option."
+          /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.sh"
+        fi
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
 
@@ -116,7 +121,12 @@ runs:
         echo "running windows security demo configuration setup"
         export OPENSEARCH_INITIAL_ADMIN_PASSWORD=${{ inputs.admin-password }}
         chmod +x  ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat
-        /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
+        if /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat -t"; then
+          echo "Command executed successfully."
+        else
+          echo "Command failed. Retrying without the -t option."
+          /bin/bash -c "yes | ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/plugins/opensearch-security/tools/install_demo_configuration.bat"
+        fi
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT/config/opensearch.yml
       shell: bash
 
