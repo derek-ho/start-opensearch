@@ -25,6 +25,7 @@ inputs:
   port:
     description: 'Port to run OpenSearch. Leave empty to use the default config (9200)'
     required: false
+    default: '9200'
 
 runs:
   using: "composite"
