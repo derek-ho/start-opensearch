@@ -27,6 +27,11 @@ inputs:
     required: false
     default: '9200'
 
+  jdk-version:
+    description: 'The version of the JDK that should be used, e.g "21"'
+    required: false
+    default: '11'
+
 runs:
   using: "composite"
   steps:
@@ -40,7 +45,7 @@ runs:
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 11
+        java-version: ${{ inputs.jdk-version }}
 
     # Download OpenSearch
     - name: Download OpenSearch for Windows
