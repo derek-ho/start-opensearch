@@ -30,7 +30,7 @@ inputs:
   jdk-version:
     description: 'The version of the JDK that should be used, e.g "21"'
     required: false
-    default: '11'
+    default: 11
 
 runs:
   using: "composite"
