@@ -42,12 +42,6 @@ runs:
       run: git config --system core.longpaths true
       shell: pwsh
 
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ inputs.jdk-version }}
-        distribution: temurin # Temurin is a distribution of adoptium
-
     # Download OpenSearch
     - name: Download OpenSearch for Windows
       uses: peternied/download-file@v2
