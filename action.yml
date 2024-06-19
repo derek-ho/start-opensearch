@@ -155,7 +155,8 @@ runs:
     - name: Replace opensearch.yml file if applicable
       if: ${{ inputs.port != '' }}
       run: |
-          echo -e "\nhttp.port: ${{ inputs.port }}" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+          echo '' >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+          echo "http.port: ${{ inputs.port }}" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
 
     # Run OpenSearch
