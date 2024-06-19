@@ -159,10 +159,6 @@ runs:
           echo "http.port: ${{ inputs.port }}" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
 
-    - if: always()
-      run: cat ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
-      shell: bash
-
     # Run OpenSearch
     - name: Run OpenSearch with plugin on Linux
       if: ${{ runner.os == 'Linux'}}
