@@ -138,10 +138,10 @@ runs:
         opensearch_minor_version=$(echo "$opensearch_version" | cut -d'.' -f2)
         if [ "$opensearch_major_version" -lt 2 ] || ([ "$opensearch_major_version" -eq 2 ] && [ "$opensearch_minor_version" -lt 12 ]); then
           echo "Running the command without -t option (OpenSearch version is $opensearch_version)"
-          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT${{ inputs.port }}/plugins/opensearch-security/tools/install_demo_configuration.bat -y -i -s"
+          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT${{ inputs.port }}/plugins/opensearch-security/tools/install_demo_configuration.bat"
         else
           echo "Running the command with -t option (OpenSearch version is $opensearch_version)"
-          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT${{ inputs.port }}/plugins/opensearch-security/tools/install_demo_configuration.bat -t -y -i -s"
+          /bin/bash -c "yes | ./opensearch-${opensearch_version}-SNAPSHOT${{ inputs.port }}/plugins/opensearch-security/tools/install_demo_configuration.bat -t"
         fi
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
@@ -157,6 +157,10 @@ runs:
       run: |
           echo '' >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
           echo "http.port: ${{ inputs.port }}" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+      shell: bash
+
+    - if: always()
+      run: cat ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
 
     # Run OpenSearch
