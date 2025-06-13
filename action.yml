@@ -30,7 +30,7 @@ inputs:
   jdk-version:
     description: 'The version of the JDK that should be used, e.g "21"'
     required: false
-    default: '11'
+    default: '21'
 
 runs:
   using: "composite"
@@ -43,8 +43,9 @@ runs:
       shell: pwsh
 
     - name: Set up JDK
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v4
       with:
+        distribution: temurin
         java-version: ${{ inputs.jdk-version }}
 
     # Download OpenSearch
