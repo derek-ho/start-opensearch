@@ -32,6 +32,11 @@ inputs:
     required: false
     default: '21'
 
+  resource-sharing-enabled:
+    description: 'Enable experimental resource sharing in the Security plugin'
+    required: false
+    default: 'false'
+
 runs:
   using: "composite"
   steps:
@@ -146,6 +151,18 @@ runs:
         fi
         echo "plugins.security.unsupported.restapi.allow_securityconfig_modification: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
       shell: bash
+
+    - name: Enable experimental resource sharing (Linux)
+      if: ${{ runner.os == 'Linux' && inputs.security-enabled == 'true' && inputs.resource-sharing-enabled == 'true' }}
+      run: |
+        echo "plugins.security.experimental.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+      shell: bash
+    
+    - name: Enable experimental resource sharing (Windows)
+      if: ${{ runner.os == 'Windows' && inputs.security-enabled == 'true' && inputs.resource-sharing-enabled == 'true' }}
+      run: |
+        echo "plugins.security.experimental.resource_sharing.enabled: true" >> ./opensearch-${{ inputs.opensearch-version }}-SNAPSHOT${{ inputs.port }}/config/opensearch.yml
+      shell: pwsh
 
     - name: Use more space
       run: |
