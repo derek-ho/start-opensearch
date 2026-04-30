@@ -40,7 +40,7 @@ inputs:
   startup-sleep-seconds:
     description: 'Seconds to wait for OpenSearch to start before running health checks'
     required: false
-    default: '30'
+    default: '45'
 
 runs:
   using: "composite"
