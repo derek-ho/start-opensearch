@@ -53,24 +53,24 @@ runs:
       shell: pwsh
 
     - name: Set up JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
       with:
         distribution: temurin
         java-version: ${{ inputs.jdk-version }}
 
     # Download OpenSearch
     - name: Download OpenSearch for Windows
-      uses: peternied/download-file@v3
       if: ${{ runner.os == 'Windows' }}
-      with:
-        url: https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
+      run: |
+        Invoke-WebRequest -Uri https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip -OutFile opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-windows-x64-latest.zip
+      shell: pwsh
 
 
     - name: Download OpenSearch for Linux
-      uses: peternied/download-file@v3
       if: ${{ runner.os == 'Linux' }}
-      with:
-        url: https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz
+      run: |
+        curl -L -o opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz https://artifacts.opensearch.org/snapshots/core/opensearch/${{ inputs.opensearch-version }}-SNAPSHOT/opensearch-min-${{ inputs.opensearch-version }}-SNAPSHOT-linux-x64-latest.tar.gz
+      shell: bash
 
     # Extract downloaded zip
     - name: Extract downloaded tar
@@ -197,9 +197,8 @@ runs:
 
     # Give the OpenSearch process some time to boot up before sending any requires, might need to increase the default time!
     - name: Sleep while OpenSearch starts
-      uses: peternied/action-sleep@v1
-      with:
-        seconds: ${{ inputs.startup-sleep-seconds }}
+      run: sleep ${{ inputs.startup-sleep-seconds }}
+      shell: bash
 
      # Verify that the server is operational
     - name: Check OpenSearch Running on Linux
